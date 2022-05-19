@@ -1,4 +1,4 @@
-module github.com/redickowii/fiber-transport
+module github.com/edickowii/fiber-transport
 
 go 1.18
 
