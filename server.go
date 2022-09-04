@@ -116,14 +116,14 @@ func (s Server) Handler(c *fiber.Ctx) error {
 	if err != nil {
 		s.errorHandler.Handle(ctx, err)
 		s.errorEncoder(ctx, err, c)
-		return err
+		return nil
 	}
 
 	response, err := s.e(ctx, request)
 	if err != nil {
 		s.errorHandler.Handle(ctx, err)
 		s.errorEncoder(ctx, err, c)
-		return err
+		return nil
 	}
 
 	for _, f := range s.after {
@@ -133,7 +133,7 @@ func (s Server) Handler(c *fiber.Ctx) error {
 	if err := s.enc(ctx, c, response); err != nil {
 		s.errorHandler.Handle(ctx, err)
 		s.errorEncoder(ctx, err, c)
-		return err
+		return nil
 	}
 	return nil
 }
