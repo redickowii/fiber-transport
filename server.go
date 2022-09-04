@@ -27,13 +27,18 @@ func NewServer(
 	e endpoint.Endpoint,
 	dec DecodeRequestFunc,
 	enc EncodeResponseFunc,
+	errFunc func(context.Context, error, *fiber.Ctx),
 	options ...ServerOption,
 ) *Server {
+
+	if errFunc == nil {
+		errFunc = DefaultErrorEncoder
+	}
 	s := &Server{
 		e:            e,
 		dec:          dec,
 		enc:          enc,
-		errorEncoder: DefaultErrorEncoder,
+		errorEncoder: errFunc,
 		errorHandler: transport.NewLogErrorHandler(log.NewNopLogger()),
 	}
 	for _, option := range options {
@@ -204,7 +209,7 @@ func DefaultErrorEncoder(_ context.Context, err error, ctx *fiber.Ctx) {
 		code = sc.StatusCode()
 	}
 	ctx.Status(code)
-	err = ctx.Send(body)
+	ctx.Send(body) //nolint:errcheck
 }
 
 // StatusCoder is checked by DefaultErrorEncoder. If an error value implements
